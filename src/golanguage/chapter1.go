@@ -132,7 +132,69 @@ func lissajous(out io.Writer) {
 	gif.EncodeAll(out, &anim)
 }
 
+func fetch_url() {
+	for _, url := range os.Args[1:] {
+		resp, err := http.Get(url)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "fetch:%v\n", err)
+			os.Exit(1)
+		}
+
+		b, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", url, err)
+			os.Exit(1)
+		}
+		fmt.Printf("%s", b)
+	}
+}
+
+func fetch_url_parallel() {
+	start := time.Now()
+	ch := make(chan string)
+	for _, url := range os.Args[1:] {
+		go fetch(url, ch) // create a goroutine
+	}
+	for range os.Args[1:] {
+		fmt.Println(<-ch)
+	}
+	fmt.Printf("%.2fs elapsed\n", time.Since(start).Seconds())
+}
+
+func fetch(url string, ch chan<- string) {
+	start := time.Now()
+	resp, err := http.Get(url)
+	if err != nil {
+		ch <- fmt.Sprint(err)
+		return
+	}
+	nbytes, err := io.Copy(ioutil.Discard, resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		ch <- fmt.Sprintf("while reading %s: %v", url, err)
+		return
+	}
+	secs := time.Since(start).Seconds()
+	ch <- fmt.Sprintf("%.2fs %7d %s", secs, nbytes, url)
+}
+
+func web_server() {
+	http.HandleFunc("/", handler)
+	log.Fatal(http.ListenAndServe("localhost:8000", nil))
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "URL.path=%q\n", r.URL.Path)
+}
+
 func main() {
+	// fetch_url()
+
+	// fetch_url_parallel()
+
+	web_server()
+
 	// var s, sep string
 	// for i := 1; i < len(os.Args); i++ {
 	// 	s += sep + os.Args[i]
@@ -147,5 +209,5 @@ func main() {
 	// }
 	// fmt.Println(s)
 
-	giff()
+	// giff()
 }
