@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"crypto/sha256"
 	"fmt"
 	"image"
 	"image/color"
@@ -188,12 +189,101 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "URL.path=%q\n", r.URL.Path)
 }
 
+func test_iota() {
+	type WeekDay int
+	const (
+		Sunday WeekDay = iota
+		Monday
+		Tuesday
+		Wednesday
+		Thursday
+		Friday
+		Saturday
+	)
+
+	type Flags uint
+	const (
+		flag1 Flags = 1 << iota
+		flag2
+		flag3
+		flag4
+		flag5
+	)
+
+	fmt.Println(flag1)
+	fmt.Println(flag2)
+	fmt.Println(flag3)
+	fmt.Println(flag4)
+	fmt.Println(flag5)
+
+	fmt.Printf("%b\n", flag1)
+	fmt.Printf("%b\n", flag2)
+	fmt.Printf("%b\n", flag3)
+	fmt.Printf("%b\n", flag4)
+	fmt.Printf("%b\n", flag5)
+
+	fmt.Println(Sunday)
+	fmt.Println(Monday)
+	fmt.Println(Tuesday)
+	fmt.Println(Wednesday)
+	fmt.Println(Thursday)
+	fmt.Println(Friday)
+	fmt.Println(Saturday)
+
+	const (
+		pi = math.Pi
+	)
+
+	pp := math.Pi
+	var fpp float32 = math.Pi
+	var lfpp float64 = math.Pi
+	fmt.Println(pi)
+	fmt.Println(pp)
+	fmt.Println(fpp)
+	fmt.Println(lfpp)
+}
+
+func test_array() {
+	q := [...]int{1, 2, 3}
+	for i, v := range q {
+		fmt.Println(i, v)
+	}
+	fmt.Println("%T\n", q)
+	q = [3]int{2, 3, 4}
+	fmt.Println("%T\n", q)
+
+	type Currency int
+	const (
+		USD Currency = iota
+		EUR
+		GBP
+		RMB
+	)
+
+	symbol := [...]string{EUR: "RR", GBP: "GG", RMB: "RR"}
+	fmt.Println(symbol[RMB], len(symbol))
+
+	c1 := sha256.Sum256([]byte("xx"))
+	c2 := sha256.Sum256([]byte("xX"))
+	fmt.Printf("%x\n%x\n%T\n", c1, c2, c1)
+	zero(&c1)
+	fmt.Printf("%x\n%x\n%T\n", c1, c2, c1)
+
+}
+func zero(ptr *[32]uint8) {
+	*ptr = [32]uint8{}
+}
+
 func main() {
+	test_array()
+
 	// fetch_url()
 
 	// fetch_url_parallel()
 
-	web_server()
+	// web_server()
+
+	// test_iota()
 
 	// var s, sep string
 	// for i := 1; i < len(os.Args); i++ {
