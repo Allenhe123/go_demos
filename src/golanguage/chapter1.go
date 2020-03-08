@@ -14,6 +14,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -274,8 +275,110 @@ func zero(ptr *[32]uint8) {
 	*ptr = [32]uint8{}
 }
 
+func test_slice() {
+	var r []rune
+	for _, v := range "hello world" {
+		r = append(r, v)
+	}
+
+	fmt.Printf("%q\n", r)
+}
+
+func appendInt(x []int, y int) []int {
+	var z []int
+	zlen := len(x) + 1
+	if zlen <= cap(x) {
+		z = x[:zlen]
+	} else {
+		zcap := zlen
+		if zcap < 2*len(x) {
+			zcap = 2 * len(x)
+		}
+		z = make([]int, zlen, zcap)
+		copy(z, x)
+	}
+	z[len(x)] = y
+	return z
+}
+
+func test_append() {
+	var x, y []int
+	for i := 0; i < 10; i++ {
+		y = appendInt(x, i)
+		fmt.Printf("%d cap=%d\t%v\n", i, cap(y), y)
+		x = y
+	}
+}
+
+func test_remove(slice []int, i int) []int {
+	copy(slice[i:], slice[i+1:])
+	return slice[:len(slice)-1]
+}
+
+func test_maop() {
+	ages := make(map[string]int)
+	ages["aa"] = 100
+	ages["bb"] = 99
+
+	fmt.Println(ages)
+}
+
+type tree struct {
+	val         int
+	left, right *tree
+}
+
+func test_sortTree(values []int) {
+	var root *tree
+	for _, v := range values {
+		root = add(root, v)
+	}
+
+	sorted := appendValues(values[:0], root)
+	fmt.Println(sorted)
+}
+
+func add(t *tree, v int) *tree {
+	if t == nil {
+		t = new(tree)
+		t.val = v
+		return t
+	}
+
+	if v < t.val {
+		t.left = add(t.left, v)
+	} else {
+		t.right = add(t.right, v)
+	}
+	return t
+}
+
+func appendValues(values []int, t *tree) []int {
+	if t != nil {
+		values = appendValues(values, t.left)
+		values = append(values, t.val)
+		values = appendValues(values, t.right)
+	}
+	return values
+}
+
 func main() {
-	test_array()
+	a := []int{3, 4, 1, 8, 9, 0, 5, 6, 5, 4}
+	test_sortTree(a)
+
+	sort.Ints(a)
+	fmt.Println(a)
+
+	// test_maop()
+
+	// z := []int{1, 2, 3, 4, 5, 6}
+	// fmt.Println(test_remove(z, 3))
+
+	// test_append()
+
+	// test_slice()
+
+	// test_array()
 
 	// fetch_url()
 
