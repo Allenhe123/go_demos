@@ -39,7 +39,8 @@ func main() {
 	// modify_1(&a)
 	// fmt.Println(a)
 
-	testing.TestingCopy()
+	// testing.TestingCopy()
+	testing.TestingSlice1()
 
 	fmt.Println("tesing done")
 	log.Print("testing done!")
