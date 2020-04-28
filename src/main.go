@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+
+	// "time"
 	"test"
 	// "os"
 )
@@ -40,7 +42,22 @@ func main() {
 	// fmt.Println(a)
 
 	// testing.TestingCopy()
-	testing.TestingSlice1()
+	// testing.TestingSlice1()
+
+	// bytes, err := testing.ReadFile("/tmp/a")
+	// if err != nil {
+	// 	fmt.Println("read /tmp/a error")
+	// }
+	// fmt.Printf("read /tmp/a: %s\n", bytes)
+
+	// testing.BigSlowOperation()
+	// testing.Testf()
+	// testing.TestStack()
+	// const day = 24 * time.Hour
+	// fmt.Println(day.Seconds())
+	// testing.TestDis()
+	// testing.TestDisPath()
+	testing.TestPointer()
 
 	fmt.Println("tesing done")
 	log.Print("testing done!")
